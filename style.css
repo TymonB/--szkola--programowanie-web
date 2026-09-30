@@ -1,0 +1,10 @@
+#lista{
+    display: flex;
+    gap: 20;
+}
+
+.wyrozniony{
+    background-color: black;
+    color: chocolate;
+    font-size: large;
+}
