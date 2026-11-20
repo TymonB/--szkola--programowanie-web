@@ -1,0 +1,19 @@
+{
+  "name": "mb07-katalog-gier",
+  "version": "1.0.0",
+  "description": "Serwer katalogu gier planszowych z middleware i obsługą błędów",
+  "main": "serwer.js",
+  "type": "module",
+  "scripts": {
+    "start": "node serwer.js",
+    "dev": "nodemon serwer.js"
+  },
+  "author": "Jan Kowalski",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
