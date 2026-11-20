@@ -1,0 +1,73 @@
+import { wczytaj, zapisz } from "./magazyn.js";
+
+// Pierwsze dwa elementy process.argv to ścieżki do Node i do skryptu — pomijamy je.
+const [, , komenda, argument] = process.argv;
+
+// Wypisuje wszystkie zadania, numerowane od 1.
+const pokazListe = async () => {
+    const zadania = await wczytaj();
+
+    if (zadania.length === 0) {
+        console.log("Brak zadań.");
+        return;
+    }
+
+    zadania.forEach(({ tekst, zrobione }, i) => {
+        console.log(`${i + 1}. [${zrobione ? "x" : " "}] ${tekst}`);
+    });
+};
+
+// Dodaje nowe zadanie na koniec listy.
+const dodajZadanie = async (tekst) => {
+    if (!tekst || tekst.trim() === "") {
+        console.error("Błąd: podaj treść zadania, np. npm run dodaj -- \"Kupić mleko\"");
+        return;
+    }
+
+    const zadania = await wczytaj();
+    const nowe = [...zadania, { tekst: tekst.trim(), zrobione: false }];
+
+    await zapisz(nowe);
+    console.log(`Dodano zadanie nr ${nowe.length}: ${tekst.trim()}`);
+};
+
+// Oznacza zadanie o podanym numerze jako wykonane.
+const oznaczZrobione = async (tekstNumeru) => {
+    const zadania = await wczytaj();
+    const numer = Number(tekstNumeru);
+
+    if (!Number.isInteger(numer) || numer < 1 || numer > zadania.length) {
+        console.error(`Błąd: podaj numer zadania od 1 do ${zadania.length}.`);
+        return;
+    }
+
+    // Nowa tablica, w której zmienia się tylko jedno zadanie — reszta zostaje bez zmian.
+    const nowe = zadania.map((zadanie, i) =>
+        i === numer - 1 ? { ...zadanie, zrobione: true } : zadanie
+    );
+
+    await zapisz(nowe);
+    console.log(`Zadanie nr ${numer} oznaczone jako zrobione: ${nowe[numer - 1].tekst}`);
+};
+
+// Instrukcja użycia — przy nieznanej komendzie albo jej braku.
+const pokazPomoc = () => {
+    console.log("Użycie:");
+    console.log("  npm run lista");
+    console.log("  npm run dodaj -- \"tekst zadania\"");
+    console.log("  npm run zrobione -- numer");
+};
+
+switch (komenda) {
+    case "lista":
+        await pokazListe();
+        break;
+    case "dodaj":
+        await dodajZadanie(argument);
+        break;
+    case "zrobione":
+        await oznaczZrobione(argument);
+        break;
+    default:
+        pokazPomoc();
+}
